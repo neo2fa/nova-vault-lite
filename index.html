@@ -77,7 +77,7 @@
 
 let storedText = "";
 
-function upload() {
+async function upload() {
   const file = document.getElementById("fileInput").files[0];
 
   if (!file) {
@@ -87,9 +87,27 @@ function upload() {
 
   const reader = new FileReader();
 
-  reader.onload = function(e) {
-    storedText = e.target.result;
-    alert("File encrypted & stored locally (demo mode).");
+  reader.onload = async function(e) {
+    const content = e.target.result;
+    storedText = content;
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        fileContent: content
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("File stored on NOVA. ID: " + data.novaId);
+    } else {
+      alert("Upload failed.");
+    }
   };
 
   reader.readAsText(file);
