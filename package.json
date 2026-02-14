@@ -1,0 +1,7 @@
+{
+  "name": "nova-vault-lite",
+  "version": "1.0.0",
+  "dependencies": {
+    "nova-sdk": "latest"
+  }
+}
