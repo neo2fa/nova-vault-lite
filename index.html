@@ -112,37 +112,32 @@ async function upload() {
 
   reader.readAsText(file);
 }
-
-function askAI() {
-  const question = document.getElementById("question").value.toLowerCase();
+async function askAI() {
+  const question = document.getElementById("question").value;
 
   if (!storedText) {
     document.getElementById("result").innerText = "No file uploaded.";
     return;
   }
 
-  if (!question) {
-    document.getElementById("result").innerText = "Please enter a question.";
-    return;
-  }
+  document.getElementById("result").innerText = "Thinking...";
 
-  const sentences = storedText.split(".");
-  let bestMatch = "";
-
-  sentences.forEach(sentence => {
-    if (sentence.toLowerCase().includes(question)) {
-      bestMatch = sentence.trim();
-    }
+  const response = await fetch("/api/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      question: question,
+      document: storedText
+    })
   });
 
-  if (bestMatch) {
-    document.getElementById("result").innerText =
-      "AI Answer (local semantic search): " + bestMatch;
-  } else {
-    document.getElementById("result").innerText =
-      "No relevant information found in encrypted memory.";
-  }
+  const data = await response.json();
+
+  document.getElementById("result").innerText = data.answer;
 }
+
 
 </script>
 
